@@ -35,7 +35,7 @@ export default function HistoryPage() {
         id: detail.id,
         imageName: detail.image_name,
         originalFilename: detail.original_filename,
-        imageUrl: `/api/uploads/${detail.image_name}`,
+        imageUrl: detail.image_url || `/api/images/${detail.image_name}`,
         prediction: detail.prediction,
         confidence: detail.confidence,
         severity: detail.severity,
@@ -125,6 +125,7 @@ export default function HistoryPage() {
             const severityBg = isHealthy
               ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
               : 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+            const itemImgSrc = item.image_url || getImageUrl(item.imageUrl || `/api/images/${item.image_name}`);
 
             return (
               <div
@@ -143,12 +144,21 @@ export default function HistoryPage() {
                   </div>
 
                   <div className="flex items-center space-x-3">
-                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex-shrink-0">
+                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex-shrink-0 relative flex items-center justify-center">
                       <img
-                        src={getImageUrl(`/api/uploads/${item.image_name}`)}
+                        src={itemImgSrc}
                         alt={item.prediction}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          if (e.target.nextSibling) {
+                            e.target.nextSibling.style.display = 'flex';
+                          }
+                        }}
                       />
+                      <div className="hidden absolute inset-0 bg-slate-900 flex-col items-center justify-center p-1 text-center text-[10px] text-slate-400 font-semibold">
+                        Image unavailable
+                      </div>
                     </div>
                     <div>
                       <h4 className="text-base font-bold text-white line-clamp-1">{item.prediction}</h4>
@@ -159,6 +169,7 @@ export default function HistoryPage() {
                     </div>
                   </div>
                 </div>
+
 
                 <div className="flex items-center space-x-2 pt-2 border-t border-slate-800">
                   <button

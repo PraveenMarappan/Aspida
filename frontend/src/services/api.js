@@ -1,4 +1,5 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
+export const API_BASE_URL = 'http://127.0.0.1:5000';
+export const API_BASE = `${API_BASE_URL}/api`;
 
 async function handleFetch(url, options = {}) {
   try {
@@ -10,7 +11,7 @@ async function handleFetch(url, options = {}) {
     return await res.json();
   } catch (err) {
     if (err.name === 'TypeError' || err.message === 'Failed to fetch') {
-      throw new Error('Unable to connect to ASPIDA backend server. Please verify Flask is running on http://127.0.0.1:5000.');
+      throw new Error('ASPIDA backend is not running. Please start Flask on port 5000.');
     }
     throw err;
   }
@@ -22,7 +23,7 @@ export async function checkHealth() {
     if (!res.ok) return { status: 'offline', error: 'Server returned non-200 response' };
     return await res.json();
   } catch (err) {
-    return { status: 'offline', error: 'Unable to connect to ASPIDA backend' };
+    return { status: 'offline', error: 'ASPIDA backend is not running. Start Flask on port 5000.' };
   }
 }
 
@@ -76,7 +77,9 @@ export function getReportUrl(detectionId) {
 
 export function getImageUrl(path) {
   if (!path) return '';
-  if (path.startsWith('http')) return path;
-  return `${API_BASE}${path}`;
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  if (path.startsWith('/')) return `${API_BASE_URL}${path}`;
+  return `${API_BASE_URL}/${path}`;
 }
+
 

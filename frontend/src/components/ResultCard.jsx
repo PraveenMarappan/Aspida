@@ -22,6 +22,23 @@ export default function ResultCard({ result, onReset }) {
     severityBg = "bg-amber-500/20 text-amber-300 border-amber-500/30";
   }
 
+  // Confidence level classification (visual label only - does NOT modify numerical percentage)
+  let confidenceLabel = "High Confidence";
+  let confidenceColor = "text-emerald-400";
+  let confidenceBarColor = "bg-emerald-400";
+
+  if (confidence < 60) {
+    confidenceLabel = "Low Confidence";
+    confidenceColor = "text-amber-400";
+    confidenceBarColor = "bg-amber-400";
+  } else if (confidence < 80) {
+    confidenceLabel = "Moderate Confidence";
+    confidenceColor = "text-yellow-400";
+    confidenceBarColor = "bg-yellow-400";
+  }
+
+  const leafImgSrc = result.image_url || getImageUrl(result.imageUrl);
+
   return (
     <div className="glass-panel rounded-2xl p-6 sm:p-8 space-y-8 animate-fade-in">
       
@@ -30,12 +47,22 @@ export default function ResultCard({ result, onReset }) {
         
         {/* Leaf Image & Prediction Title */}
         <div className="flex items-center space-x-5">
-          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-emerald-500/40 shadow-lg flex-shrink-0 bg-slate-950">
+
+          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-emerald-500/40 shadow-lg flex-shrink-0 bg-slate-950 relative flex items-center justify-center">
             <img
-              src={getImageUrl(result.imageUrl)}
+              src={leafImgSrc}
               alt="Analyzed leaf"
               className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                if (e.target.nextSibling) {
+                  e.target.nextSibling.style.display = 'flex';
+                }
+              }}
             />
+            <div className="hidden absolute inset-0 bg-slate-900 flex-col items-center justify-center p-2 text-center text-xs text-slate-400 font-semibold">
+              Image unavailable
+            </div>
           </div>
 
           <div className="space-y-1">
@@ -63,20 +90,31 @@ export default function ResultCard({ result, onReset }) {
         {/* Confidence Meter Badge */}
         <div className="flex flex-col items-center bg-slate-900/80 border border-slate-800 p-4 rounded-2xl w-full sm:w-auto">
           <span className="text-xs font-semibold text-slate-400 mb-1">
-            Confidence Score
+            {confidenceLabel}
           </span>
-          <div className="text-3xl font-black text-emerald-400">
-            {confidence}%
+          <div className={`text-3xl font-black ${confidenceColor}`}>
+            {confidence.toFixed(1)}%
           </div>
           <div className="w-28 bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
             <div
-              className="bg-emerald-400 h-full rounded-full"
-              style={{ width: `${confidence}%` }}
+              className={`${confidenceBarColor} h-full rounded-full`}
+              style={{ width: `${Math.min(100, Math.max(0, confidence))}%` }}
             />
           </div>
         </div>
 
       </div>
+
+      {/* Low Confidence Guidance Banner */}
+      {confidence < 60 && (
+        <div className="flex items-center space-x-3 p-4 rounded-xl bg-amber-950/40 border border-amber-800/60 text-amber-300 text-xs">
+          <AlertCircle className="w-5 h-5 flex-shrink-0 text-amber-400" />
+          <span>
+            The model has low confidence ({confidence.toFixed(1)}%) in this prediction. Try uploading a clear, well-lit bitter gourd leaf image with distinct symptoms.
+          </span>
+        </div>
+      )}
+
 
       {/* Overview & Key Symptoms */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

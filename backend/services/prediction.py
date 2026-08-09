@@ -55,23 +55,40 @@ def predict_leaf_disease(image_path_or_bytes, original_filename="uploaded_leaf.j
             raise ValueError("Invalid image array provided.")
         cv2.imwrite(saved_filepath, bgr)
 
+    print(f"[ASPIDA] Image received: {original_filename}")
+    print(f"[ASPIDA] Image saved: {saved_filepath}")
 
     # Preprocess & extract features
     preprocessed = load_and_preprocess_image(saved_filepath)
     feat_vec, feat_dict = extract_features(preprocessed)
+
+    # Feature vector validation
+    expected_features = getattr(scaler, 'n_features_in_', len(feat_vec))
+    actual_features = len(feat_vec)
+    print(f"[ASPIDA] Feature count: {actual_features}")
+    print(f"[ASPIDA] Expected feature count: {expected_features}")
+
+    if actual_features != expected_features:
+        raise ValueError(f"Feature count mismatch: expected {expected_features}, got {actual_features}")
 
     # Scale features
     feat_scaled = scaler.transform(feat_vec.reshape(1, -1))
 
     # ML Inference
     predicted_class = model.predict(feat_scaled)[0]
+    model_classes = list(getattr(model, 'classes_', []))
+    print(f"[ASPIDA] Model classes: {model_classes}")
+    print(f"[ASPIDA] Prediction: {predicted_class}")
     
     if hasattr(model, "predict_proba"):
         probabilities = model.predict_proba(feat_scaled)[0]
-        class_index = list(model.classes_).index(predicted_class)
-        confidence = float(probabilities[class_index] * 100.0)
+        class_index = model_classes.index(predicted_class)
+        raw_probability = float(probabilities[class_index])
+        confidence = float(raw_probability * 100.0)
+        print(f"[ASPIDA] Original model probability: {raw_probability:.4f}")
+        print(f"[ASPIDA] Display confidence: {confidence:.1f}%")
     else:
-        confidence = 92.5
+        raise RuntimeError("Loaded ML model does not support probability estimation (predict_proba).")
 
     # Determine Severity Level
     if predicted_class == 'Healthy':
@@ -97,15 +114,23 @@ def predict_leaf_disease(image_path_or_bytes, original_filename="uploaded_leaf.j
         severity=severity,
         features_dict=feat_dict
     )
+    print(f"[ASPIDA] History record created: ID {detection_id}")
+
+    image_url = f"http://127.0.0.1:5000/api/images/{unique_filename}"
 
     return {
         'id': detection_id,
+        'success': True,
         'imageName': unique_filename,
+        'image_filename': unique_filename,
         'originalFilename': original_filename,
-        'imageUrl': f"/api/uploads/{unique_filename}",
+        'imageUrl': image_url,
+        'image_url': image_url,
         'prediction': predicted_class,
         'confidence': round(confidence, 1),
+        'raw_probability': round(raw_probability, 4),
         'severity': severity,
         'features': feat_dict,
         'diseaseInfo': disease_info
     }
+

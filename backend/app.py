@@ -161,6 +161,19 @@ def download_report(detection_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/images/<path:filename>')
+def serve_image(filename):
+    clean_fn = os.path.basename(filename)
+    upload_path = os.path.join(UPLOAD_FOLDER, clean_fn)
+    if os.path.exists(upload_path):
+        return send_from_directory(UPLOAD_FOLDER, clean_fn)
+    
+    sample_path = os.path.join(SAMPLE_FOLDER, clean_fn)
+    if os.path.exists(sample_path):
+        return send_from_directory(SAMPLE_FOLDER, clean_fn)
+        
+    return jsonify({'error': f'Image {filename} not found.'}), 404
+
 @app.route('/api/uploads/<path:filename>')
 def serve_upload(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
@@ -172,3 +185,4 @@ def serve_sample(filename):
 if __name__ == '__main__':
     print("🚀 Starting ASPIDA Flask API Server on http://127.0.0.1:5000...")
     app.run(host='127.0.0.1', port=5000, debug=True)
+

@@ -115,6 +115,8 @@ def get_detection_by_id(detection_id):
     conn.close()
     if row:
         d = dict(row)
+        d['image_filename'] = d.get('image_name', '')
+        d['image_url'] = f"http://127.0.0.1:5000/api/images/{d.get('image_name', '')}"
         if d.get('features_json'):
             try:
                 d['features'] = json.loads(d['features_json'])
@@ -147,6 +149,8 @@ def get_all_detections(limit=100, disease_filter=None, search=None):
     results = []
     for r in rows:
         d = dict(r)
+        d['image_filename'] = d.get('image_name', '')
+        d['image_url'] = f"http://127.0.0.1:5000/api/images/{d.get('image_name', '')}"
         if d.get('features_json'):
             try:
                 d['features'] = json.loads(d['features_json'])
@@ -157,6 +161,7 @@ def get_all_detections(limit=100, disease_filter=None, search=None):
         results.append(d)
         
     return results
+
 
 
 def get_all_diseases():
