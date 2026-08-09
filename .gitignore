@@ -1,0 +1,66 @@
+# ==========================================
+# ASPIDA - Git Ignore Policy
+# ==========================================
+
+# Python & Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+build/
+dist/
+
+# Node.js / React / Vite
+node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+secrets
+credentials
+
+# IDE & Editor Files
+.idea/
+.vscode/*
+!.vscode/settings.json
+*.swp
+*.swo
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs & Temporary Files
+*.log
+.ipynb_checkpoints/
+*.tmp
+
+# SQLite Database Files
+*.db
+*.sqlite
+*.sqlite3
+
+# ASPIDA Generated Uploads & PDF Reports
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/reports/*
+!backend/reports/.gitkeep
+uploads/
+reports/
+
+# Generated Synthetic Training Dataset
+backend/dataset/
+dataset/

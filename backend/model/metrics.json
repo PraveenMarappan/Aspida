@@ -1,0 +1,167 @@
+{
+  "selectedModel": "SVM",
+  "classes": [
+    "Healthy",
+    "Alternaria Blight",
+    "Powdery Mildew",
+    "Downy Mildew",
+    "Anthracnose"
+  ],
+  "featureNames": [
+    "R_mean",
+    "R_std",
+    "G_mean",
+    "G_std",
+    "B_mean",
+    "B_std",
+    "H_mean",
+    "H_std",
+    "S_mean",
+    "S_std",
+    "V_mean",
+    "V_std",
+    "I_mean",
+    "I_std",
+    "glcm_contrast",
+    "glcm_correlation",
+    "glcm_energy",
+    "glcm_homogeneity",
+    "glcm_entropy"
+  ],
+  "algorithms": {
+    "SVM": {
+      "accuracy": 100.0,
+      "precision": 100.0,
+      "recall": 100.0,
+      "f1Score": 100.0,
+      "confusionMatrix": [
+        [
+          7,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          7,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          7,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          7,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          7
+        ]
+      ]
+    },
+    "Random Forest": {
+      "accuracy": 97.14,
+      "precision": 97.5,
+      "recall": 97.14,
+      "f1Score": 97.13,
+      "confusionMatrix": [
+        [
+          7,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          6,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          7,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          7,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          7
+        ]
+      ]
+    },
+    "KNN": {
+      "accuracy": 94.29,
+      "precision": 94.64,
+      "recall": 94.29,
+      "f1Score": 94.27,
+      "confusionMatrix": [
+        [
+          7,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          7,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          7,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          6,
+          1
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          6
+        ]
+      ]
+    }
+  },
+  "datasetSize": {
+    "total": 175,
+    "train": 140,
+    "test": 35
+  }
+}
