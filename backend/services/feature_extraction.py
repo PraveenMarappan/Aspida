@@ -47,9 +47,10 @@ def extract_features(preprocessed_dict):
 
     # 4. GLCM Texture Features
     gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+    gray_small = cv2.resize(gray, (128, 128), interpolation=cv2.INTER_AREA)
     
     # Calculate GLCM with distance=1 across 4 angles (0, 45, 90, 135 deg)
-    glcm = graycomatrix(gray, distances=[1], angles=[0, np.pi/4, np.pi/2, 3*np.pi/4], levels=256, symmetric=True, normed=True)
+    glcm = graycomatrix(gray_small, distances=[1], angles=[0, np.pi/4, np.pi/2, 3*np.pi/4], levels=256, symmetric=True, normed=True)
 
     contrast = float(np.mean(graycoprops(glcm, 'contrast')))
     correlation = float(np.mean(graycoprops(glcm, 'correlation')))

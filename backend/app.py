@@ -51,8 +51,8 @@ def health_check():
     model_exists = os.path.exists(MODEL_PATH) and os.path.exists(SCALER_PATH)
     return jsonify({
         'status': 'ok',
-        'service': 'ASPIDA Flask API',
-        'ml_ready': model_exists
+        'service': 'ASPIDA',
+        'model_loaded': model_exists
     })
 
 @app.route('/api/predict', methods=['POST'])
